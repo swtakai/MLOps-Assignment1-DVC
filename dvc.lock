@@ -1,0 +1,18 @@
+schema: '2.0'
+stages:
+  ingest:
+    cmd: python src/ingest.py
+    deps:
+    - path: athletes/athletes.csv
+      hash: md5
+      md5: ade8057a9ad4350dfade9180f021a96d
+      size: 71546909
+    - path: src/ingest.py
+      hash: md5
+      md5: a270df4b42053708d6108c27bae82995
+      size: 728
+    outs:
+    - path: data/raw/athletes.csv
+      hash: md5
+      md5: ade8057a9ad4350dfade9180f021a96d
+      size: 71546909

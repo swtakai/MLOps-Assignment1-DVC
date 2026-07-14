@@ -1,0 +1,109 @@
+stages:
+
+  ingest:
+    cmd: python src/ingest.py
+    deps:
+      - src/ingest.py
+      - athletes/athletes.csv
+    outs:
+      - data/raw/athletes.csv
+
+  clean:
+    cmd: python src/clean.py
+    deps:
+      - src/clean.py
+      - data/raw/athletes.csv
+    outs:
+      - data/processed/athletes_clean.csv
+
+  # ---------- v1 (raw) branch ----------
+
+  features_v1:
+    cmd: python src/features.py --input data/raw/athletes.csv --output data/processed/athletes_features_v1.csv
+    deps:
+      - src/features.py
+      - data/raw/athletes.csv
+    outs:
+      - data/processed/athletes_features_v1.csv
+
+  split_v1:
+    cmd: >
+      python src/split.py
+      --input data/processed/athletes_features_v1.csv
+      --train-out data/splits/train_v1.csv
+      --test-out data/splits/test_v1.csv
+      --seed ${seed}
+      --test-size ${test_size}
+    deps:
+      - src/split.py
+      - data/processed/athletes_features_v1.csv
+    params:
+      - seed
+      - test_size
+    outs:
+      - data/splits/train_v1.csv
+      - data/splits/test_v1.csv
+
+  train_v1:
+    cmd: python src/train.py --train data/splits/train_v1.csv --model-out models/model_v1.pkl
+    deps:
+      - src/train.py
+      - data/splits/train_v1.csv
+    outs:
+      - models/model_v1.pkl
+
+  evaluate_v1:
+    cmd: python src/evaluate.py --model models/model_v1.pkl --test data/splits/test_v1.csv --metrics-out metrics/metrics_v1.json
+    deps:
+      - src/evaluate.py
+      - models/model_v1.pkl
+      - data/splits/test_v1.csv
+    metrics:
+      - metrics/metrics_v1.json:
+          cache: false
+
+  # ---------- v2 (cleaned) branch ----------
+
+  features_v2:
+    cmd: python src/features.py --input data/processed/athletes_clean.csv --output data/processed/athletes_features_v2.csv
+    deps:
+      - src/features.py
+      - data/processed/athletes_clean.csv
+    outs:
+      - data/processed/athletes_features_v2.csv
+
+  split_v2:
+    cmd: >
+      python src/split.py
+      --input data/processed/athletes_features_v2.csv
+      --train-out data/splits/train_v2.csv
+      --test-out data/splits/test_v2.csv
+      --seed ${seed}
+      --test-size ${test_size}
+    deps:
+      - src/split.py
+      - data/processed/athletes_features_v2.csv
+    params:
+      - seed
+      - test_size
+    outs:
+      - data/splits/train_v2.csv
+      - data/splits/test_v2.csv
+
+  train_v2:
+    cmd: python src/train.py --train data/splits/train_v2.csv --model-out models/model_v2.pkl
+    deps:
+      - src/train.py
+      - data/splits/train_v2.csv
+    outs:
+      - models/model_v2.pkl
+
+  evaluate_v2:
+    cmd: python src/evaluate.py --model models/model_v2.pkl --test data/splits/test_v2.csv --metrics-out metrics/metrics_v2.json
+    deps:
+      - src/evaluate.py
+      - models/model_v2.pkl
+      - data/splits/test_v2.csv
+    metrics:
+      - metrics/metrics_v2.json:
+          cache: false
