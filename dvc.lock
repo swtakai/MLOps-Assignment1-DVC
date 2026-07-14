@@ -16,3 +16,19 @@ stages:
       hash: md5
       md5: ade8057a9ad4350dfade9180f021a96d
       size: 71546909
+  clean:
+    cmd: python src/clean.py
+    deps:
+    - path: data/raw/athletes.csv
+      hash: md5
+      md5: ade8057a9ad4350dfade9180f021a96d
+      size: 71546909
+    - path: src/clean.py
+      hash: md5
+      md5: 9333e7849c78751203b89cdf953451f8
+      size: 2499
+    outs:
+    - path: data/processed/athletes_clean.csv
+      hash: md5
+      md5: 20b65049b595084ad3e79b6f1b245a38
+      size: 10861349
