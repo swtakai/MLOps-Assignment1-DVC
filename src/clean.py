@@ -49,6 +49,7 @@ def main():
     data = data[data['gender'] != '--']
     data = data[data['age'] >= 18]
     data = data[(data['height'] < 96) & (data['height'] > 48)]
+    data = data[data['deadlift'] > 0]
 
     data = data[
         ((data['gender'] == 'Male') & (data['deadlift'] <= 1105)) |
